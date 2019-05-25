@@ -1,0 +1,62 @@
+#fixing up the data so its all homo(genous)
+
+W1Foreign$Richness <-W1Foreign$...20
+W2Foreign$Richness <-W2Foreign$...20
+W2Foreign$Treatment <- W2Foreign$`GROUP 2`
+
+library(ggplot2)
+
+#Part 1: figuring out the mean richness across groups
+
+#means for week 1 richness observed across both groups
+W1means <- c()
+
+for (i in 1:16) {W1means[i] <- (W1Cabbage$Richness[i] + W1Foreign$Richness[i])/2}
+
+print(W1means)
+
+
+#means for week 2 richness observed across both groups
+W2means <- c()
+
+for (i in 1:16) {W2means[i] <- (W2Cabbage$rICHNESS[i] + W2Foreign$Richness[i])/2}
+
+print(W2means)
+
+#make a new data frame to work with
+
+workdata <- data.frame(W1Cabbage$Treatment, W1means, W2means)
+
+attach(workdata)
+
+#first, environmental filtering: does salinity type affect the richness observed
+
+workdata$salinity <- c(0, 0, 1000, 1000, 3000, 3000, 10000, 10000, 0, 0, 1000, 1000, 3000, 3000, 10000, 10000)
+workdata$origin <- c("P","P","P","P","P","P","P","P","R","R","R","R","R","R","R","R")
+
+workdata$fakelinity <- c("0", "0", "1000", "1000", "3000", "3000", "10000", "10000", "0", "0", "1000", "1000", "3000", "3000", "10000", "10000")
+
+
+attach(workdata)
+
+#now we have a variable to use for anova
+# i am assuming that we are supposed to look only at week 1 and at ALL replicates of salinity
+
+envfilt <- lm(W1means ~ salinity + origin)
+
+plot(envfilt) #bad diagnostics but lets assume this course doesnt care about that
+
+anova(envfilt) #no significance
+
+
+###plots!
+
+envfiltplot <- ggplot(data= workdata, mapping = aes(x = salinity, y =W1means, col = origin))
+
+envfiltplot + geom_smooth() #line plot, massive confidence intervals
+
+#barplots to be refined and made cokourful
+
+envfiltplot2 <- ggplot(data= workdata, mapping = aes(x = fakelinity, y =W1means, fill = origin))
+envfiltplot2 + geom_col(position= position_dodge()) + theme_bw() + scale_fill_brewer(palette = "Blues")
+
