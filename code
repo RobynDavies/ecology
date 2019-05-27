@@ -60,3 +60,4 @@ envfiltplot + geom_smooth() #line plot, massive confidence intervals
 envfiltplot2 <- ggplot(data= workdata, mapping = aes(x = fakelinity, y =W1means, fill = origin))
 envfiltplot2 + geom_col(position= position_dodge()) + theme_bw() + scale_fill_brewer(palette = "Blues")
 
+#am frog
